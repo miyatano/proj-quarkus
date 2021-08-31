@@ -1,11 +1,15 @@
 package org.acme.hibernate.orm.panache;
 
+import java.net.URI;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Uni;
 
@@ -24,10 +28,10 @@ public class FruitResource {
         return Fruit.findById(id);
     }
 
-    @GET
-    @Path("/test")
-    public String getFirst() {
-        return Fruit.findById(1).toString();
+    @POST
+    public Uni<Response> create(Fruit fruit) {
+        return Panache.<Fruit>withTransaction(fruit::persist)
+            .onItem().transform(inserted -> Response.created(URI.create("/fruits/" + inserted.id)).build());
     }
 
 }

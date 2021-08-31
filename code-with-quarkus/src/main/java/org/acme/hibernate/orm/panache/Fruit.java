@@ -13,4 +13,7 @@ public class Fruit extends PanacheEntity{
     @Column(length = 40, unique = true)
     public String name;
 
+    @Column(nullable = false)
+    public int price;
+
 }
